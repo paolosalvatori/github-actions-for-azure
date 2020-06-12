@@ -8,7 +8,9 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
     - name: Dump credentials
-      run: echo ${{ secrets.AZURE_CREDENTIALS }}
+      env:
+        SECRETS: ${{ secrets.AZURE_CREDENTIALS }}
+      run: echo "$SECRETS"
     - name: Login to Azure
       uses: azure/login@v1.1
       with:
