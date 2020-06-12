@@ -7,7 +7,7 @@ jobs:
   azure-job:
     runs-on: [ubuntu-latest]
     steps:
-    - name: Dump credentials
+    - name: Dump Secrets
       env:
         SECRETS: ${{ secrets.AZURE_CREDENTIALS }}
       run: echo "$SECRETS"
