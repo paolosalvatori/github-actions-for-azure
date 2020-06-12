@@ -4,7 +4,7 @@ on:
   repository_dispatch:
     types: [list_running_web_apps]
 jobs:
-  azure:
+  azure-job:
     runs-on: [ubuntu-latest]
     steps:
     - name: Dump credentials
