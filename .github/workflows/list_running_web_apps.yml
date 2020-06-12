@@ -1,0 +1,16 @@
+# File: .github/workflows/workflow.yml
+name: List Web Apps
+on:
+  repository_dispatch:
+    types: [list_running_web_apps]
+jobs:
+  azure:
+    runs-on: [ubuntu-latest]
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1.1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Retrieve running Web Apps
+      run: |
+        az webapp list --query "[?state=='Running']"
