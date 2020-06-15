@@ -63,7 +63,7 @@ jobs:
               bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
             fi
           else
-            echo "[$PRE_SCRIPT_LOCATION] script file not found"
+            echo "[$PRE_SCRIPT_LOCATION] script file was not found"
             exit 1
           fi
     - name: Validate and Deploy ARM Template
@@ -84,7 +84,7 @@ jobs:
             echo "The template location parameter cannot be null or empty"
             exit 1
           fi 
-          if [[ -f $TEMPLATE_LOCATION ]]; then
+          if [[ ! -f $TEMPLATE_LOCATION ]]; then
             echo "[$TEMPLATE_LOCATION] ARM template was not found in the GitHub repository"
             exit 1
           fi 
@@ -100,8 +100,8 @@ jobs:
             echo "The template location parameter cannot be null or empty"
             exit 1
           fi 
-          if [[ -f $TEMPLATE_LOCATION ]]; then
-            echo "[$TEMPLATE_LOCATION] ARM template was not found in the GitHub repository"
+          if [[ ! -f $TEMPLATE_LOCATION ]]; then
+            echo "[$TEMPLATE_LOCATION] ARM template was not found"
             exit 1
           fi 
           if [[ -z $PARAMETERS ]]; then
@@ -152,7 +152,7 @@ jobs:
               bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
             fi
           else
-            echo "[$PRE_SCRIPT_LOCATION] script file not found"
+            echo "[$PRE_SCRIPT_LOCATION] script file was not found"
             exit 1
           fi
 
