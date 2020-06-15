@@ -142,7 +142,7 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-           if [[ -z $POST_SCRIPT_LOCATION ]]; then
+          if [[ -z $POST_SCRIPT_LOCATION ]]; then
             echo "No post deployment script was defined in the call"
             exit 0
           fi
