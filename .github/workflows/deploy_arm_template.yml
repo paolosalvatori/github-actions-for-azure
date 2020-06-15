@@ -85,22 +85,6 @@ jobs:
             exit 1
           fi 
           if [[ ! -f $TEMPLATE_LOCATION ]]; then
-            echo "[$TEMPLATE_LOCATION] ARM template was not found in the GitHub repository"
-            exit 1
-          fi 
-          if [[ -z $PARAMETERS ]]; then
-            echo "The parameters parameter cannot be null or empty"
-            exit 1
-          fi 
-          if [[ -z $RESOURCE_GROUP ]]; then
-            echo "The resource group parameter cannot be null or empty"
-            exit 1
-          fi
-          if [[ -z $TEMPLATE_LOCATION ]]; then
-            echo "The template location parameter cannot be null or empty"
-            exit 1
-          fi 
-          if [[ ! -f $TEMPLATE_LOCATION ]]; then
             echo "[$TEMPLATE_LOCATION] ARM template was not found"
             exit 1
           fi 
