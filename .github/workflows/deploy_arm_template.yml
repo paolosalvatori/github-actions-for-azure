@@ -1,5 +1,5 @@
 # File: .github/workflows/workflow.yml
-name: List Web Apps
+name: Deploy ARM Template
 on:
   repository_dispatch:
     types: [deploy_arm_template]
