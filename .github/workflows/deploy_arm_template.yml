@@ -92,29 +92,6 @@ jobs:
             echo "The parameters parameter cannot be null or empty"
             exit 1
           fi 
-          error=$(az deployment group validate \
-            --resource-group "$RESOURCE_GROUP" \
-            --template-file "$TEMPLATE_LOCATION" \
-            --parameters "$PARAMETERS" \
-            --query error \
-            --output json)
-          if [[ -z $error ]]; then
-              echo "[$TEMPLATE_LOCATION] ARM template successfully validated"
-          else
-              echo "Failed to validate the [$TEMPLATE_LOCATION] ARM template"
-              echo "$error"
-              exit 1
-          fi
-          az deployment group create \
-            --resource-group $RESOURCE_GROUP \
-            --template-file $TEMPLATE_LOCATION \
-            --parameters $PARAMETERS 1>/dev/null
-          if [[ $? == 0 ]]; then
-              echo "[$TEMPLATE_LOCATION] ARM template successfully provisioned"
-          else
-              echo "Failed to provision the [$TEMPLATE_LOCATION] ARM template"
-              exit -1
-          fi
     - name: Post Deployment Script
       uses: azure/CLI@v1
       env:
