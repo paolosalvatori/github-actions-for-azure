@@ -56,8 +56,8 @@ jobs:
       if: ${{ github.event.client_payload.resourceGroupName != null && github.event.client_payload.templateLocation != '' && github.event.client_payload.parameters != ''}}
       with:
         resourceGroupName: github-action-arm-rg
-        templateLocation: ${{ TEMPLATE_LOCATION }}
-        parameters: ${{ PARAMETERS }}
+        templateLocation: ${{ $TEMPLATE_LOCATION }}
+        parameters: ${{ $PARAMETERS }}
     - name: Post-script
       uses: azure/CLI@v1
       env:
