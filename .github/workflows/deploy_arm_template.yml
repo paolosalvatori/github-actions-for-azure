@@ -17,7 +17,7 @@ jobs:
       env:
         LOCATION: ${{ github.event.client_payload.location }}
         RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}
-      if: ${{ github.event.client_payload.location != null && github.event.client_payload.resourceGroupName != '' }}
+      if: ${{ github.event.client_payload.location != null && github.event.client_payload.resourceGroupName != null }}
       run: |
         subscriptionId=$(az account show --query id --output tsv)
         if [[ -z $LOCATION ]]; then
@@ -71,8 +71,8 @@ jobs:
       env:
         RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}
         TEMPLATE_LOCATION: ${{ github.event.client_payload.templateLocation }}
-        PARAMETERS: ${{ github.event.client_payload.parameters }}"
-      if: ${{ github.event.client_payload.resourceGroupName != null && github.event.client_payload.templateLocation != '' && github.event.client_payload.parameters != ''}}
+        PARAMETERS: ${{ github.event.client_payload.parameters }}
+      if: ${{ github.event.client_payload.resourceGroupName != null && github.event.client_payload.templateLocation != null && github.event.client_payload.parameters != null}}
       with:
         azcliversion: latest
         inlineScript: |
@@ -92,6 +92,45 @@ jobs:
             echo "The parameters parameter cannot be null or empty"
             exit 1
           fi 
+          if [[ -z $RESOURCE_GROUP ]]; then
+            echo "The resource group parameter cannot be null or empty"
+            exit 1
+          fi
+          if [[ -z $TEMPLATE_LOCATION ]]; then
+            echo "The template location parameter cannot be null or empty"
+            exit 1
+          fi 
+          if [[ -f $TEMPLATE_LOCATION ]]; then
+            echo "[$TEMPLATE_LOCATION] ARM template was not found in the GitHub repository"
+            exit 1
+          fi 
+          if [[ -z $PARAMETERS ]]; then
+            echo "The parameters parameter cannot be null or empty"
+            exit 1
+          fi
+          error=$(az deployment group validate \
+            --resource-group "$RESOURCE_GROUP" \
+            --template-file "$TEMPLATE_LOCATION" \
+            --parameters "$PARAMETERS" \
+            --query error \
+            --output json)
+          if [[ -z $error ]]; then
+              echo "[$TEMPLATE_LOCATION] ARM template successfully validated"
+          else
+              echo "Failed to validate the [$TEMPLATE_LOCATION] ARM template"
+              echo "$error"
+              exit 1
+          fi
+          az deployment group create \
+            --resource-group $RESOURCE_GROUP \
+            --template-file $TEMPLATE_LOCATION \
+            --parameters $PARAMETERS 1>/dev/null
+          if [[ $? == 0 ]]; then
+              echo "[$TEMPLATE_LOCATION] ARM template successfully provisioned"
+          else
+              echo "Failed to provision the [$TEMPLATE_LOCATION] ARM template"
+              exit -1
+          fi
     - name: Post Deployment Script
       uses: azure/CLI@v1
       env:
