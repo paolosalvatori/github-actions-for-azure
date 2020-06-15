@@ -1,8 +1,8 @@
-# This workflow deployes a configurable ARM template
-name: Deploy ARM Template
+# File: .github/workflows/workflow.yml
+name: List Web Apps
 on:
   repository_dispatch:
-
+    types: [deploy_arm_template]
 jobs:
   azure-job:
     runs-on: [ubuntu-latest]
@@ -11,3 +11,6 @@ jobs:
       uses: azure/login@v1.1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Retrieve running Web Apps
+      run: |
+        az webapp list --query "[?state=='Running']"
