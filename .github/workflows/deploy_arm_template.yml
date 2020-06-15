@@ -35,13 +35,18 @@ jobs:
     - name: Pre-script
       uses: azure/CLI@v1
       env:
-        PRE_SCRIPT: ${{ github.event.client_payload.preScript }}
-      if: ${{ github.event.client_payload.preScript != null && endsWith(github.event.client_payload.preScript, '.sh') }}
+        PRE_SCRIPT_LOCATION: ${{ github.event.client_payload.preScriptLocation }}
+        PRE_SCRIPT_ARGUMENT: ${{ github.event.client_payload.preScriptArgument }}
+      if: ${{ github.event.client_payload.preScriptLocation != null && endsWith(github.event.client_payload.preScriptLocation, '.sh') }}
       with:
         azcliversion: latest
         inlineScript: |
-          chmod +x $PRE_SCRIPT
-          bash $PRE_SCRIPT
+          chmod +x $PRE_SCRIPT_LOCATION
+          if [[ -z $PRE_SCRIPT_ARGUMENT ]]; then
+            bash $PRE_SCRIPT_LOCATION
+          else
+            bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
+          fi
     - name: Azure Resource Manager (ARM) Template Deployment JS
       uses: whiteducksoftware/azure-arm-action-js@v3
       env:
@@ -56,10 +61,15 @@ jobs:
     - name: Post-script
       uses: azure/CLI@v1
       env:
-        POST_SCRIPT: ${{ github.event.client_payload.postScript }}
-      if: ${{ github.event.client_payload.postScript != null && endsWith(github.event.client_payload.postScript, '.sh') }}
+        POST_SCRIPT_LOCATION: ${{ github.event.client_payload.postScriptLocation }}
+        POST_SCRIPT_ARGUMENT: ${{ github.event.client_payload.postScriptArgument }}
+      if: ${{ github.event.client_payload.postScriptLocation != null && endsWith(github.event.client_payload.postScriptLocation, '.sh') }}
       with:
         azcliversion: latest
         inlineScript: |
-          chmod +x $POST_SCRIPT
-          bash $POST_SCRIPT
+          chmod +x $POST_SCRIPT_LOCATION
+          if [[ -z $POST_SCRIPT_ARGUMENT ]]; then
+            bash $POST_SCRIPT_LOCATION
+          else
+            bash $POST_SCRIPT_LOCATION $POST_SCRIPT_ARGUMENT
+          fi
