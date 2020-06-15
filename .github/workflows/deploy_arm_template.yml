@@ -35,25 +35,25 @@ jobs:
             echo "[$RESOURCE_GROUP] resource group already exists in the [$subscriptionId] subscription"
         fi
     - name: Pre Deployment Script
+      uses: azure/CLI@v1
       env:
         PRE_SCRIPT_LOCATION: ${{ github.event.client_payload.preScriptLocation }}
         PRE_SCRIPT_ARGUMENT: ${{ github.event.client_payload.preScriptArgument }}
       if: ${{ github.event.client_payload.preScriptLocation != null && endsWith(github.event.client_payload.preScriptLocation, '.sh') }}
-      run: |
-        pwd
-        ls -la .
-        ls -la ..
-        if [[ -f $PRE_SCRIPT_LOCATION ]]; then
-          chmod +x $PRE_SCRIPT_LOCATION
-          if [[ -z $PRE_SCRIPT_ARGUMENT ]]; then
-            bash $PRE_SCRIPT_LOCATION
+      with:
+        azcliversion: latest
+        inlineScript: |
+          if [[ -f $PRE_SCRIPT_LOCATION ]]; then
+            chmod +x $PRE_SCRIPT_LOCATION
+            if [[ -z $PRE_SCRIPT_ARGUMENT ]]; then
+              bash $PRE_SCRIPT_LOCATION
+            else
+              bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
+            fi
           else
-            bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
+            echo "[$PRE_SCRIPT_LOCATION] script file not found"
+            exit 1
           fi
-        else
-          echo "[$PRE_SCRIPT_LOCATION] script file not found"
-          exit 1
-        fi
     - name: Azure Resource Manager (ARM) Template Deployment JS
       uses: whiteducksoftware/azure-arm-action-js@v3
       env:
