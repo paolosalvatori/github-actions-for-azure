@@ -12,5 +12,5 @@ if [[ -z $result ]]; then
     exit 0
 else
     echo "The ["$1"] storage account already exists in the ["$subscriptionId"] subscription"
-    exit 1
+    exit 0
 fi
