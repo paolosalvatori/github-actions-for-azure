@@ -1,4 +1,4 @@
-# This workflow deployes a configurable ARM template
+# This workflow deployes an ARM template
 name: Deploy ARM Template
 on:
   repository_dispatch:
@@ -7,14 +7,16 @@ jobs:
   azure-job:
     runs-on: [ubuntu-latest]
     steps:
+    - name: Checkout
+      uses: actions/checkout@v1
     - name: Login to Azure
       uses: azure/login@v1.1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Retrieve running Web Apps
+    - name: Create Resource Group
       env:
-        LOCATION: ${{ github.event.client_payload.location }}",
-        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}"
+        LOCATION: ${{ github.event.client_payload.location }}
+        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}
       if: ${{ github.event.client_payload.location != null && github.event.client_payload.resourceGroupName != '' }}
       run: |
         subscriptionId=$(az account show --query id --output tsv)
@@ -23,7 +25,7 @@ jobs:
             echo "Creating [$RESOURCE_GROUP] resource group in the [$subscriptionId] subscription..."
 
             # Create the resource group
-            if az group create --name "$RESOURCE_GROUP" --location "$location" 1>/dev/null; then
+            if az group create --name "$RESOURCE_GROUP" --location "$LOCATION" 1>/dev/null; then
                 echo "[$RESOURCE_GROUP] resource group successfully created in the [$subscriptionId] subscription"
             else
                 echo "Failed to create [$RESOURCE_GROUP] resource group in the [$subscriptionId] subscription"
@@ -32,7 +34,7 @@ jobs:
         else
             echo "[$RESOURCE_GROUP] resource group already exists in the [$subscriptionId] subscription"
         fi
-    - name: Pre-script
+    - name: Pre Deployment Script
       uses: azure/CLI@v1
       env:
         PRE_SCRIPT_LOCATION: ${{ github.event.client_payload.preScriptLocation }}
@@ -41,24 +43,29 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-          chmod +x $PRE_SCRIPT_LOCATION
-          if [[ -z $PRE_SCRIPT_ARGUMENT ]]; then
-            bash $PRE_SCRIPT_LOCATION
+          if [[ -f $PRE_SCRIPT_LOCATION ]]; then
+            chmod +x $PRE_SCRIPT_LOCATION
+            if [[ -z $PRE_SCRIPT_ARGUMENT ]]; then
+              bash $PRE_SCRIPT_LOCATION
+            else
+              bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
+            fi
           else
-            bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
+            echo "[$PRE_SCRIPT_LOCATION] script file not found"
+            exit 1
           fi
     - name: Azure Resource Manager (ARM) Template Deployment JS
       uses: whiteducksoftware/azure-arm-action-js@v3
       env:
-        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}"
-        TEMPLATE_LOCATION: ${{ github.event.client_payload.templateLocation }}"
+        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}
+        TEMPLATE_LOCATION: ${{ github.event.client_payload.templateLocation }}
         PARAMETERS: ${{ github.event.client_payload.parameters }}"
       if: ${{ github.event.client_payload.resourceGroupName != null && github.event.client_payload.templateLocation != '' && github.event.client_payload.parameters != ''}}
       with:
         resourceGroupName: github-action-arm-rg
-        templateLocation: ${{ TEMPLATE_LOCATION }}
-        parameters: ${{ PARAMETERS }}
-    - name: Post-script
+        templateLocation: ${{ env.TEMPLATE_LOCATION }}
+        parameters: ${{ env.PARAMETERS }}
+    - name: Post Deployment Script
       uses: azure/CLI@v1
       env:
         POST_SCRIPT_LOCATION: ${{ github.event.client_payload.postScriptLocation }}
@@ -73,3 +80,4 @@ jobs:
           else
             bash $POST_SCRIPT_LOCATION $POST_SCRIPT_ARGUMENT
           fi
+
