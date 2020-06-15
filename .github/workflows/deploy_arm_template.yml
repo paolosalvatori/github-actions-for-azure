@@ -38,9 +38,6 @@ jobs:
         PRE_SCRIPT_ARGUMENT: ${{ github.event.client_payload.preScriptArgument }}
       if: ${{ github.event.client_payload.preScriptLocation != null && endsWith(github.event.client_payload.preScriptLocation, '.sh') }}
       run: |
-        pwd
-        ls -la .
-        ls -la ..
         chmod +x $PRE_SCRIPT_LOCATION
         if [[ -z $PRE_SCRIPT_ARGUMENT ]]; then
           bash $PRE_SCRIPT_LOCATION
