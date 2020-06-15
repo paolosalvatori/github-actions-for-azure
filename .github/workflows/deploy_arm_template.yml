@@ -11,7 +11,7 @@ jobs:
       uses: azure/login@v1.1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Retrieve running Web Apps
+    - name: Create Resource Group
       env:
         LOCATION: ${{ github.event.client_payload.location }}",
         RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}"
@@ -47,29 +47,4 @@ jobs:
           else
             bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
           fi
-    - name: Azure Resource Manager (ARM) Template Deployment JS
-      uses: whiteducksoftware/azure-arm-action-js@v3
-      env:
-        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}"
-        TEMPLATE_LOCATION: ${{ github.event.client_payload.templateLocation }}"
-        PARAMETERS: ${{ github.event.client_payload.parameters }}"
-      if: ${{ github.event.client_payload.resourceGroupName != null && github.event.client_payload.templateLocation != '' && github.event.client_payload.parameters != ''}}
-      with:
-        resourceGroupName: github-action-arm-rg
-        templateLocation: ${{ TEMPLATE_LOCATION }}
-        parameters: ${{ PARAMETERS }}
-    - name: Post-script
-      uses: azure/CLI@v1
-      env:
-        POST_SCRIPT_LOCATION: ${{ github.event.client_payload.postScriptLocation }}
-        POST_SCRIPT_ARGUMENT: ${{ github.event.client_payload.postScriptArgument }}
-      if: ${{ github.event.client_payload.postScriptLocation != null && endsWith(github.event.client_payload.postScriptLocation, '.sh') }}
-      with:
-        azcliversion: latest
-        inlineScript: |
-          chmod +x $POST_SCRIPT_LOCATION
-          if [[ -z $POST_SCRIPT_ARGUMENT ]]; then
-            bash $POST_SCRIPT_LOCATION
-          else
-            bash $POST_SCRIPT_LOCATION $POST_SCRIPT_ARGUMENT
-          fi
+    
