@@ -32,7 +32,7 @@ jobs:
         else
             echo "[$RESOURCE_GROUP] resource group already exists in the [$subscriptionId] subscription"
         fi
-    - name: Pre-script
+    - name: Pre Deployment Script
       uses: azure/CLI@v1
       env:
         PRE_SCRIPT_LOCATION: ${{ github.event.client_payload.preScriptLocation }}
@@ -58,7 +58,7 @@ jobs:
         resourceGroupName: github-action-arm-rg
         templateLocation: ${{ env.TEMPLATE_LOCATION }}
         parameters: ${{ env.PARAMETERS }}
-    - name: Post-script
+    - name: Post Deployment Script
       uses: azure/CLI@v1
       env:
         POST_SCRIPT_LOCATION: ${{ github.event.client_payload.postScriptLocation }}
