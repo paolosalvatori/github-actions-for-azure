@@ -20,11 +20,11 @@ jobs:
       if: ${{ github.event.client_payload.location != null && github.event.client_payload.resourceGroupName != '' }}
       run: |
         subscriptionId=$(az account show --query id --output tsv)
-        if [[ -z $LOCATION ]; then
+        if [[ -z $LOCATION ]]; then
           echo "The location parameter cannot be null or empty"
           exit 1
         fi
-        if [[ -z $RESOURCE_GROUP ]; then
+        if [[ -z $RESOURCE_GROUP ]]; then
           echo "The resource group parameter cannot be null or empty"
           exit 1
         fi
@@ -76,19 +76,19 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-          if [[ -z $RESOURCE_GROUP ]; then
+          if [[ -z $RESOURCE_GROUP ]]; then
             echo "The resource group parameter cannot be null or empty"
             exit 1
           fi
-          if [[ -z $TEMPLATE_LOCATION ]; then
+          if [[ -z $TEMPLATE_LOCATION ]]; then
             echo "The template location parameter cannot be null or empty"
             exit 1
           fi 
-          if [[ -f $TEMPLATE_LOCATION ]; then
+          if [[ -f $TEMPLATE_LOCATION ]]; then
             echo "[$TEMPLATE_LOCATION] ARM template was not found in the GitHub repository"
             exit 1
           fi 
-          if [[ -z $PARAMETERS ]; then
+          if [[ -z $PARAMETERS ]]; then
             echo "The parameters parameter cannot be null or empty"
             exit 1
           fi 
