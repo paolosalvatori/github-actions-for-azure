@@ -1,0 +1,44 @@
+# This workflow deployes a configurable ARM template
+name: Deploy ARM Template
+on:
+  repository_dispatch:
+    types: [deploy_arm_template]
+jobs:
+  azure-job:
+    runs-on: [ubuntu-latest]
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1.1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Retrieve running Web Apps
+      env:
+        RESOURCE_GROUP: ${{ toJson(github.event.client_payload.resourceGroupName) }}"
+      run: |
+        subscriptionId=$(az account show --query id --output tsv)
+        if ! az group show --name "$RESOURCE_GROUP" &>/dev/null; then
+            echo "No [$RESOURCE_GROUP] resource group actually exists in the [$subscriptionId] subscription"
+            echo "Creating [$RESOURCE_GROUP] resource group in the [$subscriptionId] subscription..."
+
+            # Create the resource group
+            if az group create --name "$RESOURCE_GROUP" --location "$location" 1>/dev/null; then
+                echo "[$RESOURCE_GROUP] resource group successfully created in the [$subscriptionId] subscription"
+            else
+                echo "Failed to create [$RESOURCE_GROUP] resource group in the [$subscriptionId] subscription"
+                exit 1
+            fi
+        else
+            echo "[$RESOURCE_GROUP] resource group already exists in the [$subscriptionId] subscription"
+        fi
+    - name: Pre-script
+      if: $
+    - name: Azure Resource Manager (ARM) Template Deployment JS
+      uses: whiteducksoftware/azure-arm-action-js@v3
+      env:
+        RESOURCE_GROUP: ${{ toJson(github.event.client_payload.resourceGroupName) }}"
+        TEMPLATE_LOCATION: ${{ toJson(github.event.client_payload.templateLocation) }}"
+        PARAMETERS: ${{ toJson(github.event.client_payload.parameters) }}"
+      with:
+        resourceGroupName: github-action-arm-rg
+        templateLocation: ${{ TEMPLATE_LOCATION }}
+        parameters: ${{ PARAMETERS }}
