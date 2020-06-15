@@ -5,9 +5,9 @@ if [[ -z $1 ]]; then
 fi
 
 filter="[?name=='$1'].name"
-result=az storage account list --query "$filter"  --output tsv
+result=$(az storage account list --query "$filter"  --output tsv)
 
-if [[ -z result ]]
+if [[ -z result ]]; then
     echo "The ["$1"] storage account does not exist in the ["$subscriptionId"] subscription"
     exit 0
 else
