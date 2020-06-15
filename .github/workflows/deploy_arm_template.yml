@@ -142,19 +142,18 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-          if [[ -z $PRE_SCRIPT_LOCATION ]]; then
-            echo "No pre deployment script was defined in the call"
+           if [[ -z $POST_SCRIPT_LOCATION ]]; then
+            echo "No post deployment script was defined in the call"
             exit 0
           fi
-          if [[ -f $PRE_SCRIPT_LOCATION ]]; then
-            chmod +x $PRE_SCRIPT_LOCATION
-            if [[ -z $PRE_SCRIPT_ARGUMENT ]]; then
-              bash $PRE_SCRIPT_LOCATION
+          if [[ -f $POST_SCRIPT_LOCATION ]]; then
+            chmod +x $POST_SCRIPT_LOCATION
+            if [[ -z $POST_SCRIPT_ARGUMENT ]]; then
+              bash $POST_SCRIPT_LOCATION
             else
-              bash $PRE_SCRIPT_LOCATION $PRE_SCRIPT_ARGUMENT
+              bash $POST_SCRIPT_LOCATION $POST_SCRIPT_ARGUMENT
             fi
           else
-            echo "[$PRE_SCRIPT_LOCATION] script file was not found"
+            echo "[$POST_SCRIPT_LOCATION] script file was not found"
             exit 1
           fi
-
