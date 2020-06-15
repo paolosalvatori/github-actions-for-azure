@@ -13,8 +13,8 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Create Resource Group
       env:
-        LOCATION: ${{ github.event.client_payload.location }}",
-        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}"
+        LOCATION: ${{ github.event.client_payload.location }},
+        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}
       if: ${{ github.event.client_payload.location != null && github.event.client_payload.resourceGroupName != '' }}
       run: |
         subscriptionId=$(az account show --query id --output tsv)
@@ -50,8 +50,8 @@ jobs:
     - name: Azure Resource Manager (ARM) Template Deployment JS
       uses: whiteducksoftware/azure-arm-action-js@v3
       env:
-        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}"
-        TEMPLATE_LOCATION: ${{ github.event.client_payload.templateLocation }}"
+        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}
+        TEMPLATE_LOCATION: ${{ github.event.client_payload.templateLocation }}
         PARAMETERS: ${{ github.event.client_payload.parameters }}"
       if: ${{ github.event.client_payload.resourceGroupName != null && github.event.client_payload.templateLocation != '' && github.event.client_payload.parameters != ''}}
       with:
