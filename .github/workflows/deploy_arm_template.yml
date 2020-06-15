@@ -11,24 +11,3 @@ jobs:
       uses: azure/login@v1.1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Create Resource Group
-      env:
-        LOCATION: ${{ github.event.client_payload.location }}",
-        RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}"
-      if: ${{ github.event.client_payload.location != null && github.event.client_payload.resourceGroupName != '' }}
-      run: |
-        subscriptionId=$(az account show --query id --output tsv)
-        if ! az group show --name "$RESOURCE_GROUP" &>/dev/null; then
-            echo "No [$RESOURCE_GROUP] resource group actually exists in the [$subscriptionId] subscription"
-            echo "Creating [$RESOURCE_GROUP] resource group in the [$subscriptionId] subscription..."
-
-            # Create the resource group
-            if az group create --name "$RESOURCE_GROUP" --location "$location" 1>/dev/null; then
-                echo "[$RESOURCE_GROUP] resource group successfully created in the [$subscriptionId] subscription"
-            else
-                echo "Failed to create [$RESOURCE_GROUP] resource group in the [$subscriptionId] subscription"
-                exit 1
-            fi
-        else
-            echo "[$RESOURCE_GROUP] resource group already exists in the [$subscriptionId] subscription"
-        fi
