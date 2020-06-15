@@ -13,7 +13,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Create Resource Group
       env:
-        LOCATION: ${{ github.event.client_payload.location }},
+        LOCATION: ${{ github.event.client_payload.location }}
         RESOURCE_GROUP: ${{ github.event.client_payload.resourceGroupName }}
       if: ${{ github.event.client_payload.location != null && github.event.client_payload.resourceGroupName != '' }}
       run: |
