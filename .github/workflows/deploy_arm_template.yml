@@ -23,7 +23,7 @@ jobs:
             echo "Creating [$RESOURCE_GROUP] resource group in the [$subscriptionId] subscription..."
 
             # Create the resource group
-            if az group create --name "$RESOURCE_GROUP" --location "$location" 1>/dev/null; then
+            if az group create --name "$RESOURCE_GROUP" --location "$LOCATION" 1>/dev/null; then
                 echo "[$RESOURCE_GROUP] resource group successfully created in the [$subscriptionId] subscription"
             else
                 echo "Failed to create [$RESOURCE_GROUP] resource group in the [$subscriptionId] subscription"
