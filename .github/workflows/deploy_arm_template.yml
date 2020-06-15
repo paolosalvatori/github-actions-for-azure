@@ -108,6 +108,7 @@ jobs:
             echo "The parameters parameter cannot be null or empty"
             exit 1
           fi
+          echo  "validating [$TEMPLATE_LOCATION] ARM template..."
           error=$(az deployment group validate \
             --resource-group "$RESOURCE_GROUP" \
             --template-file "$TEMPLATE_LOCATION" \
@@ -121,14 +122,15 @@ jobs:
               echo "$error"
               exit 1
           fi
+          echo  "Deploying [$TEMPLATE_LOCATION] ARM template..."
           az deployment group create \
             --resource-group $RESOURCE_GROUP \
             --template-file $TEMPLATE_LOCATION \
             --parameters $PARAMETERS 1>/dev/null
           if [[ $? == 0 ]]; then
-              echo "[$TEMPLATE_LOCATION] ARM template successfully provisioned"
+              echo "[$TEMPLATE_LOCATION] ARM template successfully deployed"
           else
-              echo "Failed to provision the [$TEMPLATE_LOCATION] ARM template"
+              echo "Failed to deploy the [$TEMPLATE_LOCATION] ARM template"
               exit -1
           fi
     - name: Post Deployment Script
