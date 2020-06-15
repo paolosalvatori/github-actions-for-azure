@@ -2,7 +2,7 @@
 name: Deploy ARM Template
 on:
   repository_dispatch:
-    types: [deploy_arm_template]
+
 jobs:
   azure-job:
     runs-on: [ubuntu-latest]
