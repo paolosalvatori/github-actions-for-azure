@@ -1,4 +1,4 @@
-# File: .github/workflows/workflow.yml
+# This workflow deployes an ARM template
 name: Deploy ARM Template
 on:
   repository_dispatch:
